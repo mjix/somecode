@@ -1,5 +1,9 @@
 <?
-
+/**
+ * 获取demohour页面内容
+ * @param  integer $page 当前第几页
+ * @return array        每条信息
+ */
 function get_contents($page=1){
     $url = 'http://www.demohour.com/projects?page='.$page;
     $opts = array(
@@ -7,30 +11,42 @@ function get_contents($page=1){
             'method'=>"GET",
             'header'=>"Accept-language: en\r\n".
                 "User-Agent: Mozilla/5.0\r\n".
-                "Referer: http://www.demohour.com/projects\r\n".
-                "X-Requested-With: XMLHttpRequest\r\n"
+                "Referer: http://www.demohour.com/projects\r\n". //添加REFERER信息
+                "X-Requested-With: XMLHttpRequest\r\n" //发送AJAX头信息
         )
     );
 
+    //请求头信息
     $ctx = stream_context_create($opts);
     $content = file_get_contents($url, false, $ctx);
-    $content = strip_tags($content);
 
+    //去除HTML代码并格式化
+    $content = strip_tags($content);
     $contents = explode('append("', $content);
     return $contents;
 }
 
-$page = 1;
-$contents_page = array();
-while(true){
-    $conts = get_contents($page);
-    if(count($conts)<2){
-        break;
-    }
-    $page += 1;
+/**
+ * 获取所有页面的信息
+ * @return array 各条信息
+ */
+function get_all_content(){
+    $page = 1;
+    $contents_page = array();
 
-    $contents_page[] = $conts;
+    while(true){
+        $conts = get_contents($page);
+        if(count($conts)<2){ //最后一页了
+            break;
+        }
+        $page += 1;
+
+        $contents_page[] = $conts;
+    }
 }
+
+
+$contents_page = get_all_content();
 
 ?>
 
