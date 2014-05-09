@@ -43,6 +43,7 @@ function get_all_content(){
 
         $contents_page[] = $conts;
     }
+    return $contents_page;
 }
 
 
